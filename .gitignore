@@ -3,3 +3,8 @@ build/*
 */3x3-C/*
 build*/*
 install/*
+.idea/
+
+cpp/cmake-build-debug/
+
+data/

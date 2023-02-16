@@ -1,3 +1,0 @@
-record_00080.pcd
-record_00100.pcd
-record_00208.pcd
