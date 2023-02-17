@@ -131,7 +131,7 @@ struct ParamSet {
 		}
 	}
 
-	/**
+	/** 这个地方控制着两个点是否相邻的判断条件
 	 *  \brief Dynamic threshold to test whether the two adjacent pixels are discontinuous in depth
 	 *  
 	 *  \param [in] z depth of the current pixel

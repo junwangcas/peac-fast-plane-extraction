@@ -39,7 +39,7 @@
 
 //#define DEBUG_CLUSTER
 //#define DEBUG_CALC
-//#define DEBUG_INIT
+#define DEBUG_INIT
 //#define EVAL_SPEED
 
 #include "AHCTypes.hpp"
@@ -759,6 +759,10 @@ namespace ahc {
 		void initGraph(PlaneSegMinMSEQueue& minQ) {
 			const int Nh   = this->height/this->windowHeight;
 			const int Nw   = this->width/this->windowWidth;
+			std::cout << "height; windowHeight; width; windowWidth; Nh; Nw" << this->height << ","
+			<< this->windowHeight << ", " << this->width << ", " << this->windowWidth << ", "
+			<< Nh << ", " << Nw << "\n";
+
 
 			//1. init nodes
 			std::vector<PlaneSeg::Ptr> G(Nh*Nw, static_cast<PlaneSeg::Ptr>(0));
@@ -770,6 +774,7 @@ namespace ahc {
 #endif
 			for(int i=0; i<Nh; ++i) {
 				for(int j=0; j<Nw; ++j) {
+				  // 这个i, j分别是这种块
 					PlaneSeg::shared_ptr p( new PlaneSeg(
 						*this->points, (i*Nw+j),
 						i*this->windowHeight, j*this->windowWidth,
@@ -779,6 +784,7 @@ namespace ahc {
 					if(p->mse<params.T_mse(ParamSet::P_INIT, p->center[2])
 						&& !p->nouse)
 					{
+					  // 每一个块，都在这里生成了一个PlaneSeg对象
 						G[i*Nw+j]=p.get();
 						minQ.push(p);
 						//this->blkStats[i*Nw+j]=p->stats;
@@ -905,8 +911,8 @@ namespace ahc {
 			cv::cvtColor(dInit,dInit,CV_RGB2BGR);
 			cv::imshow("debug initGraph", dInit);
 			std::stringstream ss;
-			ss<<saveDir<<"/output/db_init"<<std::setw(5)<<std::setfill('0')<<cnt++<<".png";
-			std::cout << ss.str() << std::endl;
+			ss<<"db_init"<<std::setw(5)<<std::setfill('0')<<cnt++<<".png";
+			std::cout << "save here " << ss.str() << std::endl;
 			cv::imwrite(ss.str(), dInit);
 #endif
 #ifdef DEBUG_CALC

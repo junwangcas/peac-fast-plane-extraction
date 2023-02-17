@@ -208,7 +208,7 @@ struct PlaneSeg {
 		}
 	}
 
-	/**
+	/** 这个plane seg其实就是一个10*10的固定大小的区域，然后对这个区域里面的点进行处理。属于哪一类也是在这里进行赋值的。
 	*  \brief construct a PlaneSeg during graph initialization
 	*  
 	*  \param [in] points organized point cloud adapter, see NullImage3D
@@ -245,6 +245,7 @@ struct PlaneSeg {
 						if(nanCnt<nanCntTh) continue;
 					}
 #ifdef DEBUG_INIT
+					// 如果这个地方是nan那么就是没有数据
 					this->type=TYPE_MISSING_DATA;
 #endif
 					windowValid=false; break;
@@ -255,7 +256,7 @@ struct PlaneSeg {
 #ifdef DEBUG_INIT
 						this->type=TYPE_DEPTH_DISCONTINUE;
 #endif
-						windowValid=false; break;
+						windowValid=false; break; // 只有有一个像素是nan，或者是不连续的，都要把这个窗口设置成不连续，这个判断条件也太奢侈了。
 				}
 				if(i+1<imgHeight && (points.get(i+1,j,xn,yn,zn)
 					&& depthDisContinuous(z,zn,params))) {
@@ -272,7 +273,7 @@ struct PlaneSeg {
 			this->nouse=false;
 			this->N=this->stats.N;
 #ifdef DEBUG_INIT
-			this->type=TYPE_NORMAL;
+			this->type=TYPE_NORMAL; // 判断一个小窗口是否是valid的条件
 #endif
 		} else {
 			this->N=0;
