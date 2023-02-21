@@ -39,7 +39,7 @@
 
 //#define DEBUG_CLUSTER
 //#define DEBUG_CALC
-//#define DEBUG_INIT
+#define DEBUG_INIT
 //#define EVAL_SPEED
 
 #include "AHCTypes.hpp"
@@ -831,6 +831,7 @@ namespace ahc {
 			}
 #ifdef DEBUG_INIT
 			//cv::applyColorMap(dInit, dInit,  cv::COLORMAP_COOL);
+      cv::imwrite("init_node.png", dInit);
 #endif
 #ifdef DEBUG_CALC
 			int nEdge=0;

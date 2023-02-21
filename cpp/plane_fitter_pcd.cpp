@@ -294,6 +294,7 @@ int process() {
 		std::ifstream is(filelist.c_str());
 		if (!is.is_open()) {
 			std::cout << "could not open list=" << filelist << std::endl;
+			std::cout << filelist.c_str() << "\n";
 			return -1;
 		}
 
@@ -324,8 +325,11 @@ int process() {
 
 		const std::string& fname = fnamelist[idx];
 		pcl::PointCloud<pcl::PointXYZ> cloud;
-		if(pcl::io::loadPCDFile(fname, cloud) <0) {
-			std::cout<<"fail to load: "<<fname<<std::endl;
+//    std::cout<<"try to load: "<<fname<<std::endl;
+    std::string  myfile = "./orca_pts_6.pcd";
+    std::cout<<"try to load: "<<myfile<<std::endl;
+    if(pcl::io::loadPCDFile(myfile, cloud) <0) {
+			std::cout<<"fail to load: "<<myfile<<std::endl;
 		} else {
 			pcl::transformPointCloud<pcl::PointXYZ>(
 				cloud, cloud,
