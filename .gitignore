@@ -10,3 +10,5 @@ cpp/cmake-build-debug/
 data/
 
 cpp/cmake-build-release/
+
+*.m~
