@@ -325,11 +325,11 @@ int process() {
 
 		const std::string& fname = fnamelist[idx];
 		pcl::PointCloud<pcl::PointXYZ> cloud;
-    std::cout<<"try to load: "<<fname<<std::endl;
-    std::string  myfile = "./record_00081.pcd";
+//    std::cout<<"try to load: "<<fname<<std::endl;
+    std::string  myfile = "./orca_pts_6.pcd";
     std::cout<<"try to load: "<<myfile<<std::endl;
     if(pcl::io::loadPCDFile(myfile, cloud) <0) {
-			std::cout<<"fail to load: "<<fname<<std::endl;
+			std::cout<<"fail to load: "<<myfile<<std::endl;
 		} else {
 			pcl::transformPointCloud<pcl::PointXYZ>(
 				cloud, cloud,
