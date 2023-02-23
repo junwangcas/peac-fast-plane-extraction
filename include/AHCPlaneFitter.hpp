@@ -136,7 +136,7 @@ namespace ahc {
 		bool drawCoarseBorder;
 		//std::vector<PlaneSeg::Stats> blkStats;
 #if defined(DEBUG_INIT) || defined(DEBUG_CLUSTER)
-		std::string saveDir;
+		std::string saveDir = ".";
 #endif
 #ifdef DEBUG_CALC
 		std::vector<int>	numNodes;
@@ -831,6 +831,7 @@ namespace ahc {
 			}
 #ifdef DEBUG_INIT
 			//cv::applyColorMap(dInit, dInit,  cv::COLORMAP_COOL);
+			cv::imwrite("init_node1.png", dInit);
 #endif
 #ifdef DEBUG_CALC
 			int nEdge=0;
@@ -905,7 +906,7 @@ namespace ahc {
 			cv::cvtColor(dInit,dInit,CV_RGB2BGR);
 			cv::imshow("debug initGraph", dInit);
 			std::stringstream ss;
-			ss<<saveDir<<"/output/db_init"<<std::setw(5)<<std::setfill('0')<<cnt++<<".png";
+			ss<<saveDir<<"/db_init_graph"<<std::setw(5)<<std::setfill('0')<<cnt++<<".png";
 			std::cout << ss.str() << std::endl;
 			cv::imwrite(ss.str(), dInit);
 #endif
@@ -939,7 +940,7 @@ namespace ahc {
 			{
 				//this->plotSegmentImage(&dSeg, 0);
 				std::stringstream ss;
-				ss<<saveDir<<"/output/cluster_"<<std::setw(5)<<std::setfill('0')<<dSegCnt<<".png";
+				ss<<"1debug_cluster_"<<std::setw(5)<<std::setfill('0')<<dSegCnt<<".png";
 				cv::imwrite(ss.str(), dSeg);
 				cv::namedWindow("debug ahCluster");
 				cv::imshow("debug ahCluster", dSeg);
@@ -1023,8 +1024,8 @@ namespace ahc {
 						cv::circle(dGraph, cv::Point(mx,my),2,blackColor,2);
 						cv::line(dGraph, cv::Point(cx,cy), cv::Point(mx,my), blackColor,2);
 						std::stringstream ss;
-						ss<<saveDir<<"/output/dGraph_"<<std::setw(5)<<std::setfill('0')<<++dSegCnt<<".png";
-						cv::imwrite(ss.str(), dGraph);
+						ss<<"debug_dGraph_"<<std::setw(5)<<std::setfill('0')<<++dSegCnt<<".png";
+//						cv::imwrite(ss.str(), dGraph);
 						cv::imshow("debug Graph", dGraph);
 					}
 #endif
@@ -1066,7 +1067,7 @@ namespace ahc {
 							cv::line(dGraph, cv::Point(ex-len,ey), cv::Point(ex+len,ey), blackColor, 2);
 							cv::line(dGraph, cv::Point(ex,ey-len), cv::Point(ex,ey+len), blackColor, 2);
 							std::stringstream ss;
-							ss<<saveDir<<"/output/dGraph_"<<std::setw(5)<<std::setfill('0')<<++dSegCnt<<".png";
+							ss<<"debug_dGraph_"<<std::setw(5)<<std::setfill('0')<<++dSegCnt<<".png";
 							cv::imwrite(ss.str(), dGraph);
 							cv::imshow("debug Graph", dGraph);
 						}
@@ -1075,7 +1076,7 @@ namespace ahc {
 							cv::line(dSeg, cv::Point(ex-len,ey), cv::Point(ex+len,ey), blackColor, 2);
 							cv::line(dSeg, cv::Point(ex,ey-len), cv::Point(ex,ey+len), blackColor, 2);
 							std::stringstream ss;
-							ss<<saveDir<<"/output/cluster_"<<std::setw(5)<<std::setfill('0')<<dSegCnt<<".png";
+							ss<<"2debug_cluster_"<<std::setw(5)<<std::setfill('0')<<dSegCnt<<".png";
 							cv::imwrite(ss.str(), dSeg);
 							cv::imshow("debug ahCluster", dSeg);
 							cv::waitKey(5);
@@ -1087,15 +1088,15 @@ namespace ahc {
 						{
 							floodFillColor(p->rid, dGraph, cv::Vec3b(0,0,0));
 							std::stringstream ss;
-							ss<<saveDir<<"/output/dGraph_"<<std::setw(5)<<std::setfill('0')<<++dSegCnt<<".png";
+							ss<<"debug_dGraph_"<<std::setw(5)<<std::setfill('0')<<++dSegCnt<<".png";
 							cv::imwrite(ss.str(), dGraph);
 							cv::imshow("debug Graph", dGraph);
 						}
 						{
 							floodFillColor(p->rid, dSeg, cv::Vec3b(0,0,0));
 							std::stringstream ss;
-							ss<<saveDir<<"/output/cluster_"<<std::setw(5)<<std::setfill('0')<<dSegCnt<<".png";
-							cv::imwrite(ss.str(), dSeg);
+							ss<<"3debug_cluster_"<<std::setw(5)<<std::setfill('0')<<dSegCnt<<".png";
+//							cv::imwrite(ss.str(), dSeg);
 							cv::imshow("debug ahCluster", dSeg);
 							cv::waitKey(5);
 						}

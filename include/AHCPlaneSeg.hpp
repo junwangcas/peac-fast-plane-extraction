@@ -40,7 +40,14 @@ namespace ahc {
 //return true if d0 and d1 is discontinuous
 inline static bool depthDisContinuous(const double d0, const double d1, const ParamSet& params)
 {
-	return fabs(d0-d1) > params.T_dz(d0);
+  static int count = 0;
+//  bool depth_discont = fabs(d0-d1) > params.T_dz(d0);
+  bool depth_discont = fabs(d0-d1) > 0.2;
+  if (depth_discont) {
+    count++;
+//    std::cout << __FUNCTION__ << ": " << count << " fabs(d0-d1) " << fabs(d0-d1) <<"\n";
+  }
+	return depth_discont;
 }
 
 /**

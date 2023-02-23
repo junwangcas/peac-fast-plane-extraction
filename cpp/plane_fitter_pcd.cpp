@@ -242,9 +242,9 @@ int process() {
 
 	using global::pf;
 	//setup fitter
-	pf.minSupport = global::iniGet<int>("minSupport", 3000);
-	pf.windowWidth = global::iniGet<int>("windowWidth", 10);
-	pf.windowHeight = global::iniGet<int>("windowHeight", 10);
+	pf.minSupport = global::iniGet<int>("minSupport", 30);
+	pf.windowWidth = global::iniGet<int>("windowWidth", 5);
+	pf.windowHeight = global::iniGet<int>("windowHeight", 5);
 	pf.doRefine = global::iniGet<int>("doRefine", 1) != 0;
 
 	pf.params.initType = (ahc::InitType)global::iniGet("initType", (int)pf.params.initType);
