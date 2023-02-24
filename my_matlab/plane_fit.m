@@ -1,5 +1,5 @@
 clear;
-file_name = '/home/junwangcas/Documents/code/peac-fast-plane-extraction/cpp/cmake-build-release/record_00080.seg.pcd';
+file_name = '/home/junwangcas/Documents/code/peac-fast-plane-extraction/cpp/cmake-build-release/orca_pts_global_6.pcd';
 pccloud = loadpcd(file_name);
 
 height = size(pccloud, 1);
@@ -21,3 +21,4 @@ rgb(:, 3) = reshape(b, [height * width, 1]);
 
 xyzpointcloud = pointCloud(xyz, 'Color', rgb);
 pcshow(xyzpointcloud);
+xlabel('x');ylabel('y');zlabel('z');
