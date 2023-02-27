@@ -107,7 +107,7 @@ function points = loadpcd(fname)
             c = textscan(fp, format, npoints);
             points = [];
             for j=1:length(c)
-                points = [points; c{j}'];
+                points = [points; single(c{j}')];
             end
             if size(points,2) ~= npoints
                 error('incorrect number of points in file: was %d, should be %d', ...
