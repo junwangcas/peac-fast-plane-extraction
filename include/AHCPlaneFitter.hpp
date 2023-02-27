@@ -694,7 +694,7 @@ namespace ahc {
 							cv::Range(j*windowWidth, (j+1)*windowWidth)).setTo(colors[plid]);
 					} else {
 						seg(cv::Range(i*windowHeight,(i+1)*windowHeight),
-							cv::Range(j*windowWidth, (j+1)*windowWidth)).setTo(cv::Vec3b(0,0,0));
+							cv::Range(j*windowWidth, (j+1)*windowWidth)).setTo(cv::Vec3b(100,100,100));
 					}
 				}
 			}
@@ -988,6 +988,22 @@ namespace ahc {
 					//const double similarityTh=ahc::depthDependNormalDeviationTh(p->center[2],500,4000,M_PI*15/180.0,M_PI/2);
 					if(p->normalSimilarity(*nb) < params.T_ang(ParamSet::P_MERGING, p->center[2])) continue;
 					PlaneSeg::shared_ptr merge(new PlaneSeg(*p, *nb));
+          {
+            if (merge->mse > 0.005) {
+              continue;
+            }
+          }
+          {
+            if (0) {
+              std::cout << "p info " << "\n";
+              p->PrintInfo();
+              std::cout << "nb info " << "\n";
+              nb->PrintInfo();
+              std::cout << "merge info " << "\n";
+              merge->PrintInfo();
+              std::abort();
+            }
+          }
 					if(cand_merge==0 || cand_merge->mse>merge->mse ||
 						(cand_merge->mse==merge->mse && cand_merge->N<merge->N))
 					{

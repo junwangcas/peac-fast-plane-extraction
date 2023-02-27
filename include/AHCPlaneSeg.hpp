@@ -69,6 +69,7 @@ struct PlaneSeg {
 			sxx, syy, szz, //sum of xx/yy/zz
 			sxy, syz, sxz; //sum of xy/yz/xz
 		int N; //#points in this PlaneSeg
+		std::vector<Eigen::Vector3d> points;
 
 		Stats() : sx(0), sy(0), sz(0),
 			sxx(0), syy(0), szz(0),
@@ -78,7 +79,11 @@ struct PlaneSeg {
 		Stats(const Stats& a, const Stats& b) :
 		sx(a.sx+b.sx), sy(a.sy+b.sy), sz(a.sz+b.sz),
 			sxx(a.sxx+b.sxx), syy(a.syy+b.syy), szz(a.szz+b.szz),
-			sxy(a.sxy+b.sxy), syz(a.syz+b.syz), sxz(a.sxz+b.sxz), N(a.N+b.N) {}
+			sxy(a.sxy+b.sxy), syz(a.syz+b.syz), sxz(a.sxz+b.sxz), N(a.N+b.N) {
+		  points = a.points;
+      points.insert(points.end(), b.points.begin(), b.points.end());
+//		  std::cout << __FUNCTION__ << " merge \n";
+		}
 
 		inline void clear() {
 			sx=sy=sz=sxx=syy=szz=sxy=syz=sxz=0;
@@ -91,6 +96,7 @@ struct PlaneSeg {
 			sxx+=x*x; syy+=y*y; szz+=z*z;
 			sxy+=x*y; syz+=y*z; sxz+=x*z;
 			++N;
+			points.emplace_back(x, y, z);
 		}
 
 		//push a new Stats into this Stats
@@ -99,6 +105,8 @@ struct PlaneSeg {
 			sxx+=other.sxx; syy+=other.syy; szz+=other.szz;
 			sxy+=other.sxy; syz+=other.syz; sxz+=other.sxz;
 			N+=other.N;
+
+			points.insert(points.end(), other.points.begin(), other.points.end());
 		}
 
 		//caller is responsible to ensure (x,y,z) was collected in this stats
@@ -161,6 +169,43 @@ struct PlaneSeg {
 			mse = sv[0]*sc;
 			curvature=sv[0]/(sv[0]+sv[1]+sv[2]);
 		}
+
+    /**
+    *  \brief Horiz plane fitting
+    *
+    *  \param [out] center center of mass of the PlaneSeg
+    *  \param [out] normal unit normal vector of the PlaneSeg (ensure normal.z>=0)
+    *  \param [out] mse mean-square-error of the plane fitting
+    *  \param [out] curvature defined as in pcl
+    */
+    inline void ComputeHoriz(double center[3], double normal[3],
+                        double& mse, double& curvature) const
+    {
+      assert(N>=4);
+
+      const double sc=((double)1.0)/this->N;//this->ids.size();
+      //calc plane equation: center, normal and mse
+      center[0]=sx*sc;
+      center[1]=sy*sc;
+      center[2]=sz*sc;
+
+      normal[0] = 1;
+      normal[1] = 0;
+      normal[2] = 0;
+
+      double sum_sqr_error = 0;
+      for (auto &pt : points) {
+        double delta_x = pt.x() - center[0];
+        sum_sqr_error += (delta_x * delta_x);
+//        std::cout << "pt " << pt.transpose() << "\n";
+      }
+      mse = sum_sqr_error * sc;
+      std::cout << __FUNCTION__ << " mse " << mse << "\n";
+      std::cout << "center " << center[0] << ", "<< center[1] << ", " << center[2] << "\n";
+      std::cout << "sc " << sc << " N " << this->N << "\n";
+//      std::abort();
+      curvature = 0;
+    }
 	} stats;					//member points' 1st & 2nd order statistics
 
 	int rid;					//root block id
@@ -196,7 +241,7 @@ struct PlaneSeg {
 	NbSet nbs;			//neighbors, i.e. adjacency list for a graph structure
 
 	inline void update() {
-		this->stats.compute(this->center, this->normal, this->mse, this->curvature);
+		this->stats.ComputeHoriz(this->center, this->normal, this->mse, this->curvature);
 	}
 
 	PlaneSeg(const int init_block_id, const double mse, const double center[3], const double normal[3], const double curvature, const Stats& stats)
@@ -290,7 +335,7 @@ struct PlaneSeg {
 		if(this->N<4) {
 			this->mse=this->curvature=std::numeric_limits<double>::quiet_NaN();
 		} else {
-			this->stats.compute(this->center, this->normal, this->mse, this->curvature);
+			this->stats.ComputeHoriz(this->center, this->normal, this->mse, this->curvature);
 #ifdef DEBUG_CALC
 			this->mseseq.push_back(cv::Vec2d(this->N,this->mse));
 #endif
@@ -322,11 +367,13 @@ struct PlaneSeg {
 		this->rid = pa.N>=pb.N ? pa.rid : pb.rid;
 		this->N=this->stats.N;
 
+		std::cout << __FUNCTION__ << " merge " << this->rid << "\n";
+
 		//ds.union(pa.rid, pb.rid) will be called later
 		//in mergeNbsFrom(pa,pb) function, since
 		//this object might not be accepted into the graph structure
 
-		this->stats.compute(this->center, this->normal, this->mse, this->curvature);
+		this->stats.ComputeHoriz(this->center, this->normal, this->mse, this->curvature);
 
 #if defined(DEBUG_CLUSTER)
 		const uchar clx=uchar((this->normal[0]+1.0)*0.5*255.0);
@@ -429,6 +476,13 @@ struct PlaneSeg {
 		}
 		this->mseseq.push_back(cv::Vec2d(this->N,this->mse));
 #endif
+	}
+
+	inline void PrintInfo() {
+	  std::cout << "center: " << this->center[0] << ", " << this->center[1] << ", " << this->center[2] << "\n";
+	  std::cout << "norm: " << this->normal[0] << ", " << this->normal[1] << ", " << this->normal[2] << "\n";
+	  std::cout << "mse: " << this->mse << "\n";
+	  std::cout << "pt size: " << this->N << "\n";
 	}
 };//PlaneSeg
 
