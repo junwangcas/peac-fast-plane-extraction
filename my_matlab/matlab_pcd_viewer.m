@@ -1,7 +1,4 @@
-clear;
-file_name = '/home/junwangcas/Documents/code/peac-fast-plane-extraction/cpp/cmake-build-release/orca_pts_global_6.pcd';
-pccloud = loadpcd(file_name);
-
+function [ output_args ] = matlab_pcd_viewer(pccloud)
 height = size(pccloud, 1);
 width = size(pccloud, 2);
 
@@ -23,3 +20,5 @@ xyzpointcloud = pointCloud(xyz, 'Color', rgb);
 pcshow(xyzpointcloud);
 xlabel('x');ylabel('y');zlabel('z');
 axis equal
+end
+

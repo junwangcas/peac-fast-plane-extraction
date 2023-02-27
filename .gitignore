@@ -12,3 +12,7 @@ data/
 cpp/cmake-build-release/
 
 *.m~
+
+*.pcd
+
+*.txt
