@@ -11,6 +11,8 @@ for i = 1:size(pccloud_subsample, 1)
     for j = 1:size(pccloud_subsample, 2)
         z = pccloud_subsample(i, j, 3);
         if abs(z) > z_max
+            pccloud_subsample(i, j, 1) = NaN;
+            pccloud_subsample(i, j, 2) = NaN;
             pccloud_subsample(i, j, 3) = NaN;
         end
     end

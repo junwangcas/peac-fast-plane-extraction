@@ -42,7 +42,7 @@ inline static bool depthDisContinuous(const double d0, const double d1, const Pa
 {
   static int count = 0;
 //  bool depth_discont = fabs(d0-d1) > params.T_dz(d0);
-  bool depth_discont = fabs(d0-d1) > 0.2;
+  bool depth_discont = fabs(d0-d1) > 0.4;
   if (depth_discont) {
     count++;
 //    std::cout << __FUNCTION__ << ": " << count << " fabs(d0-d1) " << fabs(d0-d1) <<"\n";
@@ -287,6 +287,7 @@ struct PlaneSeg {
 
 		bool windowValid=true;
 		int nanCnt=0, nanCntTh=winHeight*winWidth/2;
+		static int nan_plane_count = 0;
 		//calc stats
 		for(int i=seed_row, icnt=0; icnt<winHeight && i<imgHeight; ++i, ++icnt) {
 			for(int j=seed_col, jcnt=0; jcnt<winWidth && j<imgWidth; ++j, ++jcnt) {
@@ -294,11 +295,15 @@ struct PlaneSeg {
 				if(!points.get(i,j,x,y,z)) {
 					if(params.initType==INIT_LOOSE) {
 						++nanCnt;
-						if(nanCnt<nanCntTh) continue;
+						if(nanCnt<nanCntTh) {
+						  std::cout << "not nan found nanCnt: " << nanCnt << " nanCntTh " << nanCntTh << "\n";
+              continue;
+						}
 					}
 #ifdef DEBUG_INIT
 					this->type=TYPE_MISSING_DATA;
 #endif
+          nan_plane_count++;
 					windowValid=false; break;
 				}
 				double xn=0,yn=0,zn=10000;
@@ -331,7 +336,7 @@ struct PlaneSeg {
 			this->stats.clear();
 			this->nouse=true;
 		}
-
+    std::cout << " nan plane count : " << nan_plane_count <<  " valid " << 3072 - nan_plane_count << "\n";
 		if(this->N<4) {
 			this->mse=this->curvature=std::numeric_limits<double>::quiet_NaN();
 		} else {

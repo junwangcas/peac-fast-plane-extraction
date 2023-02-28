@@ -32,6 +32,7 @@
 
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
 
 #include <pcl/common/transforms.h>
 
@@ -245,9 +246,10 @@ int process() {
 	pf.minSupport = global::iniGet<int>("minSupport", 30);
 	pf.windowWidth = global::iniGet<int>("windowWidth", 5);
 	pf.windowHeight = global::iniGet<int>("windowHeight", 5);
-	pf.doRefine = global::iniGet<int>("doRefine", 1) != 0;
+	pf.doRefine = global::iniGet<int>("doRefine", 0) != 0;
 
 	pf.params.initType = (ahc::InitType)global::iniGet("initType", (int)pf.params.initType);
+	pf.params.initType = ahc::InitType::INIT_LOOSE;
 
 	//T_mse
 	pf.params.stdTol_merge = global::iniGet("stdTol_merge", pf.params.stdTol_merge);
@@ -326,8 +328,9 @@ int process() {
 		const std::string& fname = fnamelist[idx];
 		pcl::PointCloud<pcl::PointXYZ> cloud;
 //    std::cout<<"try to load: "<<fname<<std::endl;
-    std::string  myfile = "./orca_pts_6.pcd";
+    std::string  myfile = "./orca_pts_global_6_sub_horiz.pcd";
     std::cout<<"try to load: "<<myfile<<std::endl;
+
     if(pcl::io::loadPCDFile(myfile, cloud) <0) {
 			std::cout<<"fail to load: "<<myfile<<std::endl;
 		} else {

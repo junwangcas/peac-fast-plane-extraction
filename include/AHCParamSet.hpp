@@ -98,6 +98,11 @@ struct ParamSet {
 		}
 	}
 
+	inline double T_mse_init() {
+	  double t = 0.005;
+    return t;
+	}
+
 	/**
 	 *  \brief Dynamic normal deviation threshold, depending on depth z
 	 *  

@@ -776,7 +776,7 @@ namespace ahc {
 						this->width, this->height,
 						this->windowWidth, this->windowHeight,
 						this->params) );
-					if(p->mse<params.T_mse(ParamSet::P_INIT, p->center[2])
+					if(p->mse < params.T_mse_init()
 						&& !p->nouse)
 					{
 						G[i*Nw+j]=p.get();
