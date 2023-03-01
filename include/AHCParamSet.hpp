@@ -99,7 +99,7 @@ struct ParamSet {
 	}
 
 	inline double T_mse_init() {
-	  double t = 0.005;
+	  double t = 0.0025;
     return t;
 	}
 

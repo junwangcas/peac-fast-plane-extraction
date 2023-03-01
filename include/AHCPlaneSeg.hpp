@@ -34,6 +34,7 @@
 #include "eig33sym.hpp"		//PlaneSeg::Stats::compute
 #include "AHCParamSet.hpp"		//depthDisContinuous
 #include "DisjointSet.hpp"	//PlaneSeg::mergeNbsFrom
+#include "PlaneFitVertical.h"
 
 namespace ahc {
 
@@ -70,6 +71,7 @@ struct PlaneSeg {
 			sxy, syz, sxz; //sum of xy/yz/xz
 		int N; //#points in this PlaneSeg
 		std::vector<Eigen::Vector3d> points;
+    PlaneFitVertical plane_fit_vertical;
 
 		Stats() : sx(0), sy(0), sz(0),
 			sxx(0), syy(0), szz(0),
@@ -206,6 +208,45 @@ struct PlaneSeg {
 //      std::abort();
       curvature = 0;
     }
+
+    /**
+*  \brief Vertical plane fitting
+*
+*  \param [out] center of mass of the PlaneSeg
+*  \param [out] normal unit normal vector of the PlaneSeg
+*  \param [out] mse mean-square-error of the plane fitting
+*  \param [out] curvature defined as in pcl
+*/
+    inline void ComputeVertical(double center[3], double normal[3],
+                             double& mse, double& curvature)
+    {
+      assert(N>=4);
+
+      const double sc=((double)1.0)/this->N;//this->ids.size();
+      //calc plane equation: center, normal and mse
+      center[0]=sx*sc;
+      center[1]=sy*sc;
+      center[2]=sz*sc;
+
+      normal[0] = 1; // not use normal
+      normal[1] = 0;
+      normal[2] = 0;
+
+      plane_fit_vertical.AddPts(points);
+      plane_fit_vertical.DoOptmization();
+
+      double sum_sqr_error = 0;
+      for (int i = 0; i < plane_fit_vertical.r_.rows(); i++) {
+        double r = plane_fit_vertical.r_(i, 0);
+        sum_sqr_error += (r * r);
+      }
+      mse = sum_sqr_error * sc;
+      std::cout << __FUNCTION__ << " mse " << mse << "\n";
+      std::cout << "center " << center[0] << ", "<< center[1] << ", " << center[2] << "\n";
+      std::cout << "sc " << sc << " N " << this->N << "\n";
+//      std::abort();
+      curvature = 0;
+    }
 	} stats;					//member points' 1st & 2nd order statistics
 
 	int rid;					//root block id
@@ -241,7 +282,7 @@ struct PlaneSeg {
 	NbSet nbs;			//neighbors, i.e. adjacency list for a graph structure
 
 	inline void update() {
-		this->stats.ComputeHoriz(this->center, this->normal, this->mse, this->curvature);
+		this->stats.ComputeVertical(this->center, this->normal, this->mse, this->curvature);
 	}
 
 	PlaneSeg(const int init_block_id, const double mse, const double center[3], const double normal[3], const double curvature, const Stats& stats)
@@ -340,7 +381,7 @@ struct PlaneSeg {
 		if(this->N<4) {
 			this->mse=this->curvature=std::numeric_limits<double>::quiet_NaN();
 		} else {
-			this->stats.ComputeHoriz(this->center, this->normal, this->mse, this->curvature);
+			this->stats.ComputeVertical(this->center, this->normal, this->mse, this->curvature);
 #ifdef DEBUG_CALC
 			this->mseseq.push_back(cv::Vec2d(this->N,this->mse));
 #endif
@@ -378,7 +419,7 @@ struct PlaneSeg {
 		//in mergeNbsFrom(pa,pb) function, since
 		//this object might not be accepted into the graph structure
 
-		this->stats.ComputeHoriz(this->center, this->normal, this->mse, this->curvature);
+		this->stats.ComputeVertical(this->center, this->normal, this->mse, this->curvature);
 
 #if defined(DEBUG_CLUSTER)
 		const uchar clx=uchar((this->normal[0]+1.0)*0.5*255.0);

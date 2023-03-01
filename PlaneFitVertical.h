@@ -21,6 +21,7 @@ class PlaneFitVertical {
   Sophus::SO2d pose_so2_;
   std::vector<Eigen::Vector3d> pts_lmks_;
   Eigen::Vector2d bias_axis_;
+  Eigen::MatrixXd r_;
 
   int max_iter_ = 10;
 

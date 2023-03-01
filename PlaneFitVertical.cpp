@@ -51,11 +51,11 @@ void PlaneFitVertical::DoOptmization()
 //      std::cout << " error: " << r.transpose() << "\n";
 //      std::cout << " J: " << J.transpose() << "\n";
     }
-
+    r_ = r;
     auto dx = - (J.transpose() * J).inverse() * J.transpose() * r;
     pose_so2_ = pose_so2_ * Sophus::SO2d::exp(dx(0, 0));
-    std::cout << " error " << r.norm() << " dx " << dx << "\n";
-    std::cout << " log " << pose_so2_.log() << "\n";
+//    std::cout << " error " << r.norm() << " dx " << dx << "\n";
+//    std::cout << " log " << pose_so2_.log() << "\n";
   }
   angle_ = pose_so2_.log();
 }

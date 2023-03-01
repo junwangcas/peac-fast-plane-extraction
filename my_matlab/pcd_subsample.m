@@ -7,8 +7,8 @@ pccloud = loadpcd(input_file_name);
 matlab_pcd_viewer(pccloud);
 
 z_max = 2.5;
-x_max = 2.5;
-y_max = 3.0;
+x_max = 1.3;
+y_max = 1.8;
 pccloud_subsample = pccloud;
 for i = 1:size(pccloud_subsample, 1)
     for j = 1:size(pccloud_subsample, 2)

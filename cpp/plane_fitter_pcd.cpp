@@ -244,8 +244,8 @@ int process() {
 	using global::pf;
 	//setup fitter
 	pf.minSupport = global::iniGet<int>("minSupport", 30);
-	pf.windowWidth = global::iniGet<int>("windowWidth", 5);
-	pf.windowHeight = global::iniGet<int>("windowHeight", 5);
+	pf.windowWidth = global::iniGet<int>("windowWidth", 30);
+	pf.windowHeight = global::iniGet<int>("windowHeight", 30);
 	pf.doRefine = global::iniGet<int>("doRefine", 0) != 0;
 
 	pf.params.initType = (ahc::InitType)global::iniGet("initType", (int)pf.params.initType);
@@ -328,7 +328,7 @@ int process() {
 		const std::string& fname = fnamelist[idx];
 		pcl::PointCloud<pcl::PointXYZ> cloud;
 //    std::cout<<"try to load: "<<fname<<std::endl;
-    std::string  myfile = "./orca_pts_global_6_sub_horiz.pcd";
+    std::string  myfile = "./orca_vertical_17.pcd";
     std::cout<<"try to load: "<<myfile<<std::endl;
 
     if(pcl::io::loadPCDFile(myfile, cloud) <0) {
