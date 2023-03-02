@@ -530,6 +530,16 @@ struct PlaneSeg {
 	  std::cout << "mse: " << this->mse << "\n";
 	  std::cout << "pt size: " << this->N << "\n";
 	}
+
+	inline void PrintAllInfo() {
+	  std::cout << __FUNCTION__ << ", " << rid << ", " << center[0] << ", " << center[1] << ", " << center[2] << ", " <<
+	    mse << ", " << stats.plane_fit_vertical.angle_ << ", " << stats.N << "\n";
+	  std::cout << __FUNCTION__  << ", " << rid;
+	  for (auto &pt : stats.points) {
+	    std::cout << ", " << pt.x() << ", " << pt.y() << ", " << pt.z();
+    }
+	  std::cout << "\n";
+  }
 };//PlaneSeg
 
 }//ahc

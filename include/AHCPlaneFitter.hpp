@@ -244,6 +244,9 @@ namespace ahc {
 			if(verbose) {
 				std::cout<<"#step="<<step<<", #extractedPlanes="
 					<<this->extractedPlanes.size()<<std::endl;
+				for (auto &p : extractedPlanes) {
+				  p->PrintAllInfo();
+				}
 			}
 #ifdef EVAL_SPEED
 			return timer2.toc();
